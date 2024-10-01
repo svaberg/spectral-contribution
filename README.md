@@ -1,5 +1,5 @@
 # Spectral contribution
-Compute the spectral contribution function using ChiantiPy
+Compute the spectral contribution function using ChiantiPy.
 
 ## Installation
 
@@ -28,3 +28,5 @@ Pre-computed spectral contribution functions are available in the `precomputed-s
 ```bash
 python plot-G-spectrum.py precomputed-spectra/Z-1.0e-07-G.npy
 ```
+
+![Precomputed Spectrum](plot-components-Z-1.0e-07-G.npy.png)
