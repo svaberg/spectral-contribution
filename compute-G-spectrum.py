@@ -10,9 +10,9 @@ temperatures = np.geomspace(1e4, 1e8, 201)
 D, T, W = np.meshgrid(densities, temperatures, wvls, indexing = 'ij')
 Z = np.zeros(D.shape + (5,))
 
-np.save(f"D.npy", D)
-np.save(f"T.npy", T)
-np.save(f"W.npy", W)
+np.save(f"grid-density.npy", D)
+np.save(f"grid-temperature.npy", T)
+np.save(f"grid-wavelength.npy", W)
 
 # Setting the abundance and resolution. Meshgrid fixes the dimension differences
 

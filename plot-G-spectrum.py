@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm, Normalize
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-D = np.load(f"D.npy")  # Density grid
-T = np.load(f"T.npy")  # Temperature grid
-W = np.load(f"W.npy")  # Wavelength grid
+D = np.load(f"grid-density.npy")  # Density grid
+T = np.load(f"grid-temperature.npy")  # Temperature grid
+W = np.load(f"grid-wavelength.npy")  # Wavelength grid
 
 
 def main(file_name):
