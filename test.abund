@@ -1,0 +1,6 @@
+ 1  12.00  H
+ 2  11.00  He
+ 6  10.00  C 
+ -1
+ % Test abundance file.
+ % The CHIANTI .abund files are located in $XUVTOP/abundance/

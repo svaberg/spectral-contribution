@@ -1,12 +1,14 @@
 import numpy as np
-
 import ChiantiPy.core as ch
 import ChiantiPy.tools.filters as chfilters
 
+abundance = None          # This will make ChiPy use the default abundance file
+abundance = 'test.abund'  # This is a local test abundance file
 
-wvls = np.linspace(1,180, 2001)
-densities = np.array([1e10])
-temperatures = np.geomspace(1e4, 1e8, 201)
+wvls = np.linspace(1,180, 2001)             # Wavelengths in Angstroms
+densities = np.array([1e10])                # Densities in cm^-3 (I think the units are cm^-3)
+temperatures = np.geomspace(1e4, 1e8, 201)  # Temperatures in K
+
 D, T, W = np.meshgrid(densities, temperatures, wvls, indexing = 'ij')
 Z = np.zeros(D.shape + (5,))
 
@@ -14,15 +16,10 @@ np.save(f"grid-density.npy", D)
 np.save(f"grid-temperature.npy", T)
 np.save(f"grid-wavelength.npy", W)
 
-# Setting the abundance and resolution. Meshgrid fixes the dimension differences
-
-min_abundances = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
-
+min_abundances = [1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
 for min_abundance in min_abundances:
 
-    save_name = f"{min_abundance:2.1e}-G"
-    print(f"{save_name=}")
-    print(f'{min_abundance=}')
+    print(f"Now computing {min_abundance=:.1e}.")
 
     # Generating the intensities for the given temperatures, wavelengths and densities
     for i, density in enumerate(densities):
@@ -33,7 +30,7 @@ for min_abundance in min_abundances:
                            em = None, 
                            doContinuum=True, 
                            minAbund=float(min_abundance),
-                           abundance='sun_coronal_2012_schmelz_ext.abund', 
+                           abundance=abundance,
                         #    proc=1,
                            verbose=False,
                            )
@@ -55,4 +52,14 @@ for min_abundance in min_abundances:
                     Z[i, idx, jdx, 3] = line[idx, jdx]
                     Z[i, idx, jdx, 4] = twophoton[idx, jdx]
 
-    np.save(f"Z-{save_name}.npy",Z)
+    print(f"Using abundance file {spectrum.AbundanceName}.")
+    save_name = f"G_lambda_T-spectrum.AbundanceName={spectrum.AbundanceName}-{min_abundance=:2.1e}.npy"
+    print(f"Saving file named {save_name=}")
+    np.save(save_name, Z)
+
+    if np.min(spectrum.Abundance[spectrum.Abundance>0]) >= min_abundance:
+        print('Reached minimum abundance')
+        break
+
+
+
