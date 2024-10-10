@@ -18,15 +18,10 @@ To create the required data run `compute-G-spectrum.py`.
 ```bash
 python compute-G-spectrum.py 
 ```
-This creates files with names like this `Z-1.0e-01-G.npy` 
+This creates files with names like this `G_lambda_T-spectrum.AbundanceName=*-min_abundance=1.0e???.npy` 
 
 To plot the results run `plot-G-spectrum.py` with the desired `.npy` file:
 ```bash
-python plot-G-spectrum.py Z-1.0e-01-G.npy
+python plot-G-spectrum.py G_lambda_T-spectrum.AbundanceName=*-min_abundance=1.0e-02.npy
 ```
-
-Pre-computed spectral contribution functions are available in the `precomputed-spectra` folder
-```bash
-python plot-G-spectrum.py precomputed-spectra/Z-1.0e-07-G.npy
-```
-
+Some pre-computed spectral contribution functions are available in the `precomputed-spectra` folder.
