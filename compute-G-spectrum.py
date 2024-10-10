@@ -2,8 +2,8 @@ import numpy as np
 import ChiantiPy.core as ch
 import ChiantiPy.tools.filters as chfilters
 
-abundance = None          # This will make ChiPy use the default abundance file
 abundance = 'test.abund'  # This is a local test abundance file
+abundance = None          # This will make ChiPy use the default abundance file
 
 wvls = np.linspace(1,180, 2001)             # Wavelengths in Angstroms
 densities = np.array([1e10])                # Densities in cm^-3 (I think the units are cm^-3)
