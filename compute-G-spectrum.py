@@ -41,6 +41,9 @@ for min_abundance in min_abundances:
         line = spectrum.LineSpectrum['intensity']
         twophoton = spectrum.TwoPhoton['intensity']
 
+        # Z persists across decreasing min_abundance runs. ChiantiPy can
+        # return NaN values at lower minAbund settings, so we skip those
+        # entries and keep the existing finite value from an earlier pass.
         for idx in range(intensity.shape[0]):
             for jdx in range(intensity.shape[1]):
                 if np.isnan(intensity[idx, jdx]):
@@ -60,6 +63,5 @@ for min_abundance in min_abundances:
     if np.min(spectrum.Abundance[spectrum.Abundance>0]) >= min_abundance:
         print('Reached minimum abundance')
         break
-
 
 
