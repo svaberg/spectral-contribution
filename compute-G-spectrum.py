@@ -1,6 +1,7 @@
 import numpy as np
 import ChiantiPy.core as ch
 import ChiantiPy.tools.filters as chfilters
+import xarray as xr
 
 abundance = 'test.abund'  # This is a local test abundance file
 abundance = None          # This will make ChiPy use the default abundance file
@@ -9,12 +10,7 @@ wvls = np.linspace(1,180, 2001)             # Wavelengths in Angstroms
 densities = np.array([1e10])                # Densities in cm^-3 (I think the units are cm^-3)
 temperatures = np.geomspace(1e4, 1e8, 201)  # Temperatures in K
 
-D, T, W = np.meshgrid(densities, temperatures, wvls, indexing = 'ij')
-Z = np.zeros(D.shape + (5,))
-
-np.save(f"grid-density.npy", D)
-np.save(f"grid-temperature.npy", T)
-np.save(f"grid-wavelength.npy", W)
+Z = np.zeros((len(densities), len(temperatures), len(wvls), 4))
 
 min_abundances = [1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
 for min_abundance in min_abundances:
@@ -49,19 +45,34 @@ for min_abundance in min_abundances:
                 if np.isnan(intensity[idx, jdx]):
                     continue
                 else:
-                    Z[i, idx, jdx, 0] = intensity[idx, jdx]
-                    Z[i, idx, jdx, 1] = freefree[idx, jdx]
-                    Z[i, idx, jdx, 2] = freebound[idx, jdx]
-                    Z[i, idx, jdx, 3] = line[idx, jdx]
-                    Z[i, idx, jdx, 4] = twophoton[idx, jdx]
+                    Z[i, idx, jdx, 0] = freefree[idx, jdx]
+                    Z[i, idx, jdx, 1] = freebound[idx, jdx]
+                    Z[i, idx, jdx, 2] = line[idx, jdx]
+                    Z[i, idx, jdx, 3] = twophoton[idx, jdx]
 
     print(f"Using abundance file {spectrum.AbundanceName}.")
-    save_name = f"G_lambda_T-spectrum.AbundanceName={spectrum.AbundanceName}-{min_abundance=:2.1e}.npy"
+    save_name = f"G_lambda_T-spectrum.AbundanceName={spectrum.AbundanceName}-{min_abundance=:2.1e}.nc"
     print(f"Saving file named {save_name=}")
-    np.save(save_name, Z)
+    xr.Dataset(
+        data_vars={
+            "freefree": (("density", "temperature", "wavelength"), Z[:, :, :, 0]),
+            "freebound": (("density", "temperature", "wavelength"), Z[:, :, :, 1]),
+            "line": (("density", "temperature", "wavelength"), Z[:, :, :, 2]),
+            "twophoton": (("density", "temperature", "wavelength"), Z[:, :, :, 3]),
+        },
+        coords={
+            "density": ("density", densities, {"units": "cm^-3"}),
+            "temperature": ("temperature", temperatures, {"units": "K"}),
+            "wavelength": ("wavelength", wvls, {"units": "Angstrom"}),
+        },
+        attrs={
+            "abundance_name": spectrum.AbundanceName,
+            "min_abundance": float(min_abundance),
+            "filter_width": 0.1,
+            "filter_width_units": "Angstrom",
+        },
+    ).to_netcdf(save_name)
 
     if np.min(spectrum.Abundance[spectrum.Abundance>0]) >= min_abundance:
         print('Reached minimum abundance')
         break
-
-
