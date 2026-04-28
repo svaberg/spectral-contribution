@@ -51,7 +51,7 @@ for min_abundance in min_abundances:
                     Z[i, idx, jdx, 3] = twophoton[idx, jdx]
 
     print(f"Using abundance file {spectrum.AbundanceName}.")
-    save_name = f"G_lambda_T-spectrum.AbundanceName={spectrum.AbundanceName}-{min_abundance=:2.1e}.nc"
+    save_name = f"spectral-contribution.AbundanceName={spectrum.AbundanceName}-{min_abundance=:2.1e}.nc"
     print(f"Saving file named {save_name=}")
     xr.Dataset(
         data_vars={
