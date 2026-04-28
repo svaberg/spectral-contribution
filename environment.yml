@@ -1,0 +1,11 @@
+name: spectral-contribution
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - scipy
+  - matplotlib
+  - xarray
+  - netcdf4
+  - chiantipy

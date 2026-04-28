@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spectral-contribution"
+version = "0.1.0"
+description = "Compute spectral contribution functions using ChiantiPy."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Dag Evensberget", email = "dag.evensberget@gmail.com" }]
+keywords = ["ChiantiPy", "spectroscopy", "astrophysics"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "ChiantiPy",
+  "matplotlib",
+  "netCDF4",
+  "numpy",
+  "scipy",
+  "xarray",
+]
+
+[project.urls]
+Repository = "https://github.com/svaberg/spectral-contribution"
+Issues = "https://github.com/svaberg/spectral-contribution/issues"
+
+[tool.setuptools]
+py-modules = []
