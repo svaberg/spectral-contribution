@@ -48,6 +48,17 @@ hydrogen:
 python compute-G-spectrum.py --min-abundance 1e-4
 ```
 
+The default uses ChiantiPy's `spectrum` implementation. On a system where
+multiprocessing is supported, request ChiantiPy's `mspectrum` implementation
+with `--processes N`. For example:
+
+```bash
+python compute-G-spectrum.py --min-abundance 1e-7 --processes 16
+```
+
+The selected backend and requested process count are recorded in the NetCDF
+metadata.
+
 The wavelength limits, wavelength step, abundance table, threshold, and output
 directory can all be changed on the command line. See the complete interface
 with:

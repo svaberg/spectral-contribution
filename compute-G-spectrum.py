@@ -46,8 +46,12 @@ def compute_spectral_contribution(
     wavelength_step_angstrom: float,
     min_abundance: float,
     abundance: str,
+    processes: int,
     output_dir: Path,
 ) -> Path:
+    if processes < 1:
+        raise ValueError("The process count must be at least one")
+
     wavelengths = fixed_step_grid(
         wavelength_min_angstrom,
         wavelength_max_angstrom,
@@ -61,14 +65,18 @@ def compute_spectral_contribution(
         dtype=float,
     )
 
+    spectrum_class = ch.spectrum if processes == 1 else ch.mspectrum
+    spectrum_kwargs = {} if processes == 1 else {"proc": processes}
+    spectrum_backend = "spectrum" if processes == 1 else "mspectrum"
     print(
         f"Computing min_abundance={min_abundance:.1e} on "
         f"{wavelengths.size} wavelengths from {wavelengths[0]:g} to "
-        f"{wavelengths[-1]:g} Angstrom with delta_lambda={wavelength_step_angstrom:g} Angstrom."
+        f"{wavelengths[-1]:g} Angstrom with delta_lambda={wavelength_step_angstrom:g} Angstrom "
+        f"using {spectrum_backend} with {processes} process(es)."
     )
     spectrum = None
     for density_index, density in enumerate(densities):
-        spectrum = ch.spectrum(
+        spectrum = spectrum_class(
             temperatures,
             density,
             wavelengths,
@@ -78,6 +86,7 @@ def compute_spectral_contribution(
             minAbund=float(min_abundance),
             abundance=abundance,
             verbose=False,
+            **spectrum_kwargs,
         )
         component_values[density_index] = np.stack(
             [
@@ -194,6 +203,8 @@ def compute_spectral_contribution(
             "flux_type": spectrum.Defaults["flux"],
             "do_continuum": 1,
             "do_lines": 1,
+            "spectrum_backend": spectrum_backend,
+            "process_count_requested": processes,
             "chiantipy_version": ChiantiPy.__version__,
             "chianti_database_version": chio.versionRead(),
         },
@@ -210,6 +221,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wavelength-step", type=float, default=DEFAULT_WAVELENGTH_STEP_ANGSTROM)
     parser.add_argument("--min-abundance", type=float, default=DEFAULT_MIN_ABUNDANCE)
     parser.add_argument("--abundance", default=DEFAULT_ABUNDANCE)
+    parser.add_argument(
+        "--processes",
+        type=int,
+        default=1,
+        help="Use spectrum with 1 process (default), or mspectrum with N > 1 processes.",
+    )
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
     return parser.parse_args()
 
@@ -222,6 +239,7 @@ def main() -> None:
         wavelength_step_angstrom=args.wavelength_step,
         min_abundance=args.min_abundance,
         abundance=args.abundance,
+        processes=args.processes,
         output_dir=args.output_dir,
     )
 
