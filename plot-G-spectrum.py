@@ -40,19 +40,27 @@ def main(file_name):
         ax.set_yscale('log')
         ax.set_title(f"{title} term")
 
-    fig.colorbar(im,
-                 ax=[axs['C'], axs['E']],
-                 label = r'Intensity (units TBD)',
-                 extend = 'both',
-                 location='right',)
+    fig.colorbar(
+        im,
+        ax=[axs['C'], axs['E']],
+        label=r'$G_\lambda(T_\mathrm{e})$ (erg cm$^3$ s$^{-1}$ sr$^{-1}$ $\AA^{-1}$)',
+        extend='both',
+        location='right',
+    )
 
     axs['A'].set_xlabel(r'Wavelength $\lambda$ (Å)')
     axs['A'].set_ylabel(r'Electron temperature $T_\text{e}$ (K)')
     axs['A'].set_title('Spectral contribution function')
-    save_name = Path(file_name).stem
-    fig.suptitle(f"File: {file_name}")
-    plt.savefig(f"plot-components-{save_name}.png")
-    plt.show()
+    source_path = Path(file_name)
+    save_name = source_path.stem
+    fig.suptitle(
+        rf"$\lambda={wavelength[0]:g}$--${wavelength[-1]:g}\,\AA$, "
+        rf"$\Delta\lambda={dataset.attrs['wavelength_step']:g}\,\AA$, "
+        rf"minimum abundance $={dataset.attrs['min_abundance']:.1e}$"
+    )
+    output_path = source_path.parent / f"plot-components-{save_name}.png"
+    plt.savefig(output_path)
+    print(f"Saved {output_path}")
     plt.close()
 
 

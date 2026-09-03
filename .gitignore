@@ -1,5 +1,6 @@
 *.npy
 *.png
+outputs/
 __pycache__/
 
 
