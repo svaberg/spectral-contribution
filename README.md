@@ -32,17 +32,20 @@ python compute-G-spectrum.py
 
 The default grid is linear in wavelength from 1 to 250 Angstrom with
 `deltalambda = 0.05 Angstrom`. It uses 201 geometrically spaced temperatures
-from `1e4` to `1e8 K`, an electron density of `1e10 cm-3`, the
-`sun_photospheric_2015_scott` abundance table, and `minAbund = 1e-1`.
+from `1e4` to `1e8 K`, an electron density of `1e10 cm-3`, and the
+`sun_photospheric_2015_scott` abundance table.
 
-The resulting filename is:
+The calculation follows the decreasing minimum-abundance ramp
+`1, 1e-1, ..., 1e-7` and saves one file per step. The final filename from the
+default ramp is:
 
 ```text
-outputs/spectral-contribution.wavelength=1-250-dlambda=0.05.AbundanceName=sun_photospheric_2015_scott-min_abundance=1.0e-01.nc
+outputs/spectral-contribution.wavelength=1-250-dlambda=0.05.AbundanceName=sun_photospheric_2015_scott-min_abundance=1.0e-07.nc
 ```
 
-For example, to include elements down to an abundance of `1e-4` relative to
-hydrogen:
+`--min-abundance` sets the final threshold rather than requesting an isolated
+calculation. For example, stopping at `1e-4` computes and saves the steps
+`1`, `1e-1`, `1e-2`, `1e-3`, and `1e-4`:
 
 ```bash
 python compute-G-spectrum.py --min-abundance 1e-4
@@ -56,8 +59,11 @@ with `--processes N`. For example:
 python compute-G-spectrum.py --min-abundance 1e-7 --processes 16
 ```
 
-The selected backend and requested process count are recorded in the NetCDF
-metadata.
+The selected backend, requested process count, complete ramp, and current ramp
+step are recorded in the NetCDF metadata. The component arrays persist across
+the ramp: wherever a later ChiantiPy result has a NaN total intensity, the
+finite component values from the preceding threshold are retained, matching
+the original workflow.
 
 The wavelength limits, wavelength step, abundance table, threshold, and output
 directory can all be changed on the command line. See the complete interface
@@ -68,8 +74,9 @@ python compute-G-spectrum.py --help
 ```
 
 `minAbund` is an elemental-abundance cutoff, not a numerical-accuracy
-tolerance. ChiantiPy includes an element when its number abundance relative to
-hydrogen is greater than or equal to the specified threshold.
+tolerance. At each ramp step, ChiantiPy includes an element when its number
+abundance relative to hydrogen is greater than or equal to that step's
+threshold.
 
 ## NetCDF contents
 
